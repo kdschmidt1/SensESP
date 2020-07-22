@@ -203,9 +203,9 @@ char buf[128];
 //  pDigitalInput -> connectTo(new SKOutputNumber(sk_path));
 //  Serial.printf("Connection done to new I2C Input\n");
 		I2CInput* pI2CInput;
-		sprintf(buf, "%sBearing16",config_path);
+		sprintf(buf, "navigation.headingMagnetic",config_path);
 		pI2CInput = new I2CInput(0x60,2, buf, 16);
-		auto* pTransform = new Linear(0.1, 0.0, buf);
+		auto* pTransform = new Linear(0.1*0.0174532925, 0.0, buf); // Umrechnung rad ergänzt
 		pI2CInput -> connectTo(pTransform)-> connectTo(new SKOutputNumber(buf));
 				sprintf(buf, "%sBearingBosch",config_path);
 		pI2CInput = new I2CInput(0x60,26, buf, 16);
