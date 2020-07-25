@@ -224,9 +224,10 @@ char buf[128];
 		sprintf(buf, "%sPitch",config_path);
 		pI2CInput = new I2CInput(0x60,4, buf, 8);
 		pI2CInput -> connectTo(new SKOutputNumber(buf));
-		sprintf(buf, "%sXRoll",config_path);
+		sprintf(buf, "navigation.attitude.roll");
 		pI2CInput = new I2CInput(0x60,5, buf, 8);
-		pI2CInput -> connectTo(new SKOutputNumber(buf));
+		auto* pTransform = new Linear(0.0174532925, 0.0, buf); // Umrechnung rad
+		pI2CInput -> connectTo(pTransform)-> connectTo(new SKOutputNumber(buf));
 	// Start the SensESP application running
 	sensesp_app->enable();
 });
