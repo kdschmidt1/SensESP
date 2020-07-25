@@ -7,6 +7,9 @@ class I2CInput : public NumericSensor {
 
 public:
     I2CInput(uint8_t given_address,uint8_t given_register, String config_path, uint8_t given_registersize);
+    bool StoreCalibrationI2C(uint8_t address);
+    bool EraseCalibrationI2C(uint8_t address);
+
   bool scanI2CAddress(uint8_t address);
   void enable() override final;
   void scanAllI2C();
@@ -17,6 +20,7 @@ public:
 
 private:
   bool found = true;
+  bool autoc = true;
   uint8_t address;
   uint8_t regi;
   void update();

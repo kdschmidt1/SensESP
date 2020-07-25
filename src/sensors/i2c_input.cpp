@@ -94,6 +94,7 @@ JsonObject& I2CInput::get_configuration(JsonBuffer& buf) {
   root.set("value", output);
   root.set("address", address);
   root.set("found", found);
+  root.set("auto", autoc);
   return root;
 }
 
@@ -102,7 +103,8 @@ static const char SCHEMA[] PROGMEM = R"({
     "properties": {
         "address": { "title": "I2C address", "type": "number" },
         "found": { "title": "Device found", "type": "boolean", "readOnly": true },
-        "value": { "title": "Last value", "type" : "number", "readOnly": true }
+        "value": { "title": "Last value", "type" : "number", "readOnly": true },
+        "auto": { "title": "StoreCalibration", "type" : "boolean", "readOnly": false }
     }
   })";
 
@@ -116,6 +118,16 @@ bool I2CInput::set_configuration(const JsonObject& config) {
   }
   address = config["address"];
   found== config["found"];
+  autoc = config["auto"];
+      Serial.print(F("Autocalibration: "));
+      Serial.println(autoc);
+      if(autoc)
+        {
+          Serial.println("Storing Configuration");
+          StoreCalibrationI2C(0x60);
+          autoc=0;
+        }
+
   return true;
 }
 
@@ -136,7 +148,51 @@ bool I2CInput::PollI2C(uint8_t address, uint8_t register, uint8_t count)
   return(true);
 }
 
+bool I2CInput::StoreCalibrationI2C(uint8_t address)
+{
+  uint8_t errorCode;
+  Wire.beginTransmission(address);
+  Wire.write(0);  // the register
+  Wire.write(0Xf0);  // the register
+  delay(20);
+  Wire.write(0Xf5);  // the register
+  delay(20);
+  Wire.write(0Xf6);  // the register
+  delay(20);
+  errorCode = Wire.endTransmission();
+  if (errorCode != 0) 
+      {
+      Serial.print(F("Error reading from CMPS12 at address: "));
+      Serial.print(address, HEX);
+      Serial.print(F(" ErrorCode: "));
+      Serial.println(errorCode);
+      return(-1);
+      }
+  return true;
+}
 
+bool I2CInput::EraseCalibrationI2C(uint8_t address)
+{
+  uint8_t errorCode;
+  Wire.beginTransmission(address);
+  Wire.write(0);  // the register
+  Wire.write(0Xe0);  // the register
+  delay(20);
+  Wire.write(0Xe5);  // the register
+  delay(20);
+  Wire.write(0Xe2);  // the register
+  delay(20);
+  errorCode = Wire.endTransmission();
+  if (errorCode != 0) 
+      {
+      Serial.print(F("Error reading from CMPS12 at address: "));
+      Serial.print(address, HEX);
+      Serial.print(F(" ErrorCode: "));
+      Serial.println(errorCode);
+      return(-1);
+      }
+  return true;
+}
 
 float I2CInput::ReadI2C(uint8_t address, uint8_t regi, uint8_t count)
 {
