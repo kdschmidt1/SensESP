@@ -29,6 +29,7 @@ private:
   uint8_t registersize;
   bool PollI2C(uint8_t address, uint8_t register, uint8_t count);
   float ReadI2C(uint8_t address, uint8_t register, uint8_t count);
+  bool i2c_write_register(uint8_t address, uint8_t register, uint8_t data);
 };
 
 

@@ -133,6 +133,23 @@ bool I2CInput::set_configuration(const JsonObject& config) {
   return true;
 }
 
+bool I2CInput::i2c_write_register(uint8_t address, uint8_t regi, uint8_t data)
+{
+  uint8_t errorCode;
+  Wire.beginTransmission(address);
+  Wire.write(regi);
+  Wire.write(data);
+  errorCode = Wire.endTransmission();
+  if (errorCode != 0) 
+      {
+      Serial.print(F("Error reading from CMPS12 at address: "));
+      Serial.print(address, HEX);
+      Serial.print(F(" ErrorCode: "));
+      Serial.println(errorCode);
+      return(-1);
+      }
+  return true;
+}
 bool I2CInput::PollI2C(uint8_t address, uint8_t register, uint8_t count)
 {
     uint8_t errorCode;
@@ -150,49 +167,23 @@ bool I2CInput::PollI2C(uint8_t address, uint8_t register, uint8_t count)
   return(true);
 }
 
-bool I2CInput::StoreCalibrationI2C(uint8_t address)
+bool I2CInput::StoreCalibrationI2C(uint8_t adress)
 {
-  uint8_t errorCode;
-  Wire.beginTransmission(address);
-  Wire.write(0);  // the register
-  Wire.write(0Xf0);  // the register
-  delay(20);
-  Wire.write(0Xf5);  // the register
-  delay(20);
-  Wire.write(0Xf6);  // the register
-  delay(20);
-  errorCode = Wire.endTransmission();
-  if (errorCode != 0) 
-      {
-      Serial.print(F("Error reading from CMPS12 at address: "));
-      Serial.print(address, HEX);
-      Serial.print(F(" ErrorCode: "));
-      Serial.println(errorCode);
-      return(-1);
-      }
+i2c_write_register(adress, 0, 0xf0);
+delay(20);
+i2c_write_register(adress, 0, 0xf5);
+delay(20);
+i2c_write_register(adress, 0, 0xf6);
   return true;
 }
 
-bool I2CInput::EraseCalibrationI2C(uint8_t address)
+bool I2CInput::EraseCalibrationI2C(uint8_t adress)
 {
-  uint8_t errorCode;
-  Wire.beginTransmission(address);
-  Wire.write(0);  // the register
-  Wire.write(0Xe0);  // the register
-  delay(20);
-  Wire.write(0Xe5);  // the register
-  delay(20);
-  Wire.write(0Xe2);  // the register
-  delay(20);
-  errorCode = Wire.endTransmission();
-  if (errorCode != 0) 
-      {
-      Serial.print(F("Error reading from CMPS12 at address: "));
-      Serial.print(address, HEX);
-      Serial.print(F(" ErrorCode: "));
-      Serial.println(errorCode);
-      return(-1);
-      }
+i2c_write_register(adress, 0, 0xe0);
+delay(20);
+i2c_write_register(adress, 0, 0xe5);
+delay(20);
+i2c_write_register(adress, 0, 0xe2);
   return true;
 }
 
