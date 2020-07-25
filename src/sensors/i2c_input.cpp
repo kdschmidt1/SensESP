@@ -98,6 +98,8 @@ JsonObject& I2CInput::get_configuration(JsonBuffer& buf) {
   return root;
 }
 
+
+
 static const char SCHEMA[] PROGMEM = R"({
     "type": "object",
     "properties": {

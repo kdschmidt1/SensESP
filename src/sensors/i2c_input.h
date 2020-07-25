@@ -3,6 +3,7 @@
 
 #include "sensor.h"
 
+
 class I2CInput : public NumericSensor {
 
 public:
